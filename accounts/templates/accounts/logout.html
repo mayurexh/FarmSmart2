@@ -1,0 +1,20 @@
+{% extends 'predictions/layout.html' %}
+
+
+
+{% block body %}
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+    <div class="col-md-4">
+        <div class="card shadow">
+            <div class="card-body text-center">
+                <h3 class="mb-4">Are you sure you want to logout?</h3>
+                <form method="POST">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger btn-block">Logout</button>
+                </form>
+                <a href="{% url 'home' %}" class="btn btn-secondary btn-block mt-2">Cancel</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

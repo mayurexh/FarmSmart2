@@ -1,0 +1,32 @@
+{% extends 'marketplace/layout.html' %}
+{% block content %}
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 100vh;">
+    <div class="card p-4 shadow-lg" style="width: 40rem; background-color: #eafaea; border-radius: 10px;">
+        <h2 class="text-center mb-4 text-dark">Add a Product</h2>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="productName">Product Name</label>
+                <input type="text" class="form-control" id="productName" name="name" required>
+            </div>
+            <div class="form-group">
+                <label for="description">Description</label>
+                <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="price">Price (₹)</label>
+                <input type="number" class="form-control" id="price" name="price" required>
+            </div>
+            <div class="form-group">
+                <label for="stock">Stock Quantity</label>
+                <input type="number" class="form-control" id="stock" name="stock" required>
+            </div>
+            <div class="form-group">
+                <label for="productImage">Product Image</label>
+                <input type="file" class="form-control-file" id="productImage" name="image">
+            </div>
+            <button type="submit" class="btn btn-success btn-block">Add Product</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

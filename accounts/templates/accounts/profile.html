@@ -1,0 +1,22 @@
+{% extends 'predictions/layout.html' %}
+
+
+
+{% block body %}
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+    <div class="col-md-6">
+        <div class="card shadow">
+            <div class="card-body">
+                <h3 class="text-center mb-4">Your Profile</h3>
+                <p><strong>Username:</strong> {{ user.username }}</p>
+                <p><strong>Email:</strong> {{ user.email }}</p>
+                <p><strong>Address:</strong> {{ user.userprofile.address }}</p>
+                <p><strong>City:</strong> {{ user.userprofile.city }}</p>
+                <p><strong>State:</strong> {{ user.userprofile.state }}</p>
+                <p><strong>Pincode:</strong> {{ user.userprofile.pincode }}</p>
+                <a href="{%url 'edit_profile'%}" class="btn btn-primary btn-block">Edit Profile</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends 'marketplace/layout.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <!-- Left Side: Product Image -->
+        <div class="col-md-6">
+            <img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-fluid rounded shadow-lg">
+        </div>
+
+        <!-- Right Side: Product Details -->
+        <div class="col-md-6">
+            <h2 class="mb-3">{{ product.name }}</h2>
+            <p class="text-muted">{{ product.description }}</p>
+            
+            <p><strong>Seller:</strong> {{ product.seller.user.username }}</p>
+            <p><strong>Address:</strong> {{ product.seller.address }}</p>
+            
+            <h4 class="text-success">₹{{ product.price }}</h4>
+            <p><strong>Stock Available:</strong> {{ product.stock }}</p>
+
+            <!-- Action Buttons -->
+            <div class="mt-4">
+                <a href="#" class="btn btn-success btn-lg mr-2">Buy Now</a>
+                <a href="{% url 'add_to_cart' product.id %}" class="btn btn-warning btn-lg">Add to Cart</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
