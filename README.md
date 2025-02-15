@@ -5,11 +5,6 @@
 
 </div>
 
-<div align="center">
-
-[![made-for-ai](https://forthebadge.com/images/badges/made-for-ai.svg)](https://forthebadge.com)
-[![Open Source Love](https://badges.frapsoft.com/os/v1/open-source.svg?v=103)](https://github.com/ellerbrock/open-source-badges/)
-</div>
 
 ## Project Description
 
@@ -27,9 +22,6 @@ This repository provides the necessary context to enable Large Language Models (
 *   [Installation](#installation)
 *   [Usage](#usage)
 *   [Dependencies](#dependencies)
-*   [Contributing](#contributing)
-*   [License](#license)
-*   [Contact](#contact)
 
 ## Installation
 
@@ -63,20 +55,6 @@ This will start the Django development server, typically accessible at `http://l
 *   **pandas**: A data analysis and manipulation library.
 *   **requests**: A library for making HTTP requests.
 
-## Contributing
-
-Contributions are welcome! To contribute to this repository:
-
-1.  Fork the repository.
-2.  Create a new branch for your feature or bug fix.
-3.  Commit your changes with descriptive commit messages.
-4.  Submit a pull request.
-
-## License
-
-This project is licensed under the [MIT License](LICENSE.txt) (Placeholder).
-
-## Contact
 
 For questions, issues, or contributions, please contact:
 
