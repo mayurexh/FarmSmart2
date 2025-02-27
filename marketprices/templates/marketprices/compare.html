@@ -1,0 +1,339 @@
+{% extends 'predictions/layout.html' %}
+{%block body%}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Market Prices</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Market Prices</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .container {
+            max-width: 95%;
+            margin: 0 auto;
+        }
+
+        .table {
+            margin-top: 10px;
+            text-align: center;
+            font-size: 0.9rem;
+            width: 100%;
+            table-layout: fixed;
+        }
+
+        .table th, .table td {
+            padding: 0.5rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        h4 {
+            margin-bottom: 15px;
+            margin-top: 10px;
+        }
+
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            margin-right: -15px;
+            margin-left: -15px;
+        }
+
+        .col-md-6 {
+            padding: 10px;
+            width: 100%;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        @media (max-width: 768px) {
+            .col-md-6 {
+                flex: 0 0 100%;
+                max-width: 100%;
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+
+</head>
+<body>
+    <div class="container mt-4">
+        <!-- Inputs Section -->
+        <div class="row">
+            <!-- Left Input Box -->
+            <div class="col-md-5">
+                <h5>First Selection</h5>
+                <input type="text" id="state1" class="form-control mb-2" placeholder="Enter State">
+                <input type="text" id="district1" class="form-control mb-2" placeholder="Enter District">
+                <input type="text" id="commodity1" class="form-control mb-2" placeholder="Enter Commodity">
+                <input type="text" id="arrival_date1" class="form-control mb-2" placeholder="Enter Arrival Date">
+
+
+            </div>
+    
+            <!-- Buttons Section -->
+            <div class="col-md-2 text-center">
+                <button id="search1" class="btn btn-primary btn-block mt-4">Search1</button>
+                <button id="search2" class="btn btn-primary btn-block mt-4">Search2</button>
+                <button id="compare" class="btn btn-success btn-block mt-4">Compare</button>
+            </div>
+    
+            <!-- Right Input Box -->
+            <div class="col-md-5">
+                <h5>Second Selection</h5>
+                <input type="text" id="state2" class="form-control mb-2" placeholder="Enter State">
+                <input type="text" id="district2" class="form-control mb-2" placeholder="Enter District">
+                <input type="text" id="commodity2" class="form-control mb-2" placeholder="Enter Commodity">
+                <input type="text" id="arrival_date2" class="form-control mb-2" placeholder="Enter Arrival Date">
+
+            </div>
+        </div>
+    
+        <!-- Tables Section -->
+        <div class="row mt-4">
+            <!-- First Selection Table -->
+            <div class="col-md-6">
+                <h4 class="text-center">Selection 1</h4>
+                <div class="table-responsive">
+                    <table id="results-table1" class="table table-striped table-bordered" style="display: none;">
+                        <thead>
+                            <tr>
+                                <th>State</th>
+                                <th>District</th>
+                                <th>Market</th>
+                                <th>Commodity</th>
+                                <th>Variety</th>
+                                <th>Grade</th>
+                                <th>Arrival Date</th>
+                                <th>Min Price</th>
+                                <th>Max Price</th>
+                                <th>Modal Price</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+    
+            <!-- Second Selection Table -->
+            <div class="col-md-6">
+                <h4 class="text-center">Selection 2</h4>
+                <div class="table-responsive">
+                    <table id="results-table2" class="table table-striped table-bordered" style="display: none;">
+                        <thead>
+                            <tr>
+                                <th>State</th>
+                                <th>District</th>
+                                <th>Market</th>
+                                <th>Commodity</th>
+                                <th>Variety</th>
+                                <th>Grade</th>
+                                <th>Arrival Date</th>
+                                <th>Min Price</th>
+                                <th>Max Price</th>
+                                <th>Modal Price</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    
+        <!-- Chart Section -->
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <h5>Price Comparison Chart</h5>
+                <canvas id="priceChart"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="container mt-4">
+        <h3 class="text-center">Price Comparison Chart</h3>
+        <canvas id="priceChart"></canvas>
+    </div>
+    
+    
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Function to fetch and display data
+            function fetchData(state, district, commodity, arrival_date, tableId) {
+                if (!state || !district || !commodity) {
+                    alert("Please enter State, District, and Commodity.");
+                    return;
+                }
+        
+                fetch(`/market-prices/search-prices/?state=${state}&district=${district}&commodity=${commodity}&arrival_date=${arrival_date}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        let tableBody = document.querySelector(`#${tableId} tbody`);
+                        tableBody.innerHTML = ""; // Clear old data
+        
+                        if (data.records.length === 0) {
+                            alert("No data found.");
+                            return;
+                        }
+        
+                        data.records.forEach(record => {
+                            let row = `
+                                <tr>
+                                    <td>${record.State}</td>
+                                    <td>${record.District}</td>
+                                    <td>${record.Market}</td>
+                                    <td>${record.Commodity}</td>
+                                    <td>${record.Variety}</td>
+                                    <td>${record.Grade}</td>
+                                    <td>${record.Arrival_Date}</td>
+                                    <td>₹${record.Min_Price}</td>
+                                    <td>₹${record.Max_Price}</td>
+                                    <td>₹${record.Modal_Price}</td>
+                                </tr>
+                            `;
+                            tableBody.innerHTML += row;
+                        });
+        
+                        document.getElementById(tableId).style.display = "table"; // Show table
+                    })
+                    .catch(error => {
+                        console.error("Error fetching data:", error);
+                        alert("Error fetching data. Please try again.");
+                    });
+            }
+        
+            // Event listener for "Search1" button (First Selection)
+            document.getElementById("search1").addEventListener("click", function () {
+                let state = document.getElementById("state1").value.trim();
+                let district = document.getElementById("district1").value.trim();
+                let commodity = document.getElementById("commodity1").value.trim();
+                let arrival_date = document.getElementById("arrival_date1").value.trim();
+                fetchData(state, district, commodity, arrival_date, "results-table1");
+            });
+
+            // Event listener for "Search2" button (First Selection)
+            document.getElementById("search2").addEventListener("click", function () {
+                let state = document.getElementById("state2").value.trim();
+                let district = document.getElementById("district2").value.trim();
+                let commodity = document.getElementById("commodity2").value.trim();
+                let arrival_date = document.getElementById("arrival_date2").value.trim();
+
+                fetchData(state, district, commodity,arrival_date, "results-table2");
+            });
+        
+            // Event listener for "Compare" button (Fetch both selections)
+            // document.getElementById("compare").addEventListener("click", function () {
+            //     let state1 = document.getElementById("state1").value.trim();
+            //     let district1 = document.getElementById("district1").value.trim();
+            //     let commodity1 = document.getElementById("commodity1").value.trim();
+        
+            //     let state2 = document.getElementById("state2").value.trim();
+            //     let district2 = document.getElementById("district2").value.trim();
+            //     let commodity2 = document.getElementById("commodity2").value.trim();
+        
+            //     if (!state1 || !district1 || !commodity1 || !state2 || !district2 || !commodity2) {
+            //         alert("Please enter all fields for comparison.");
+            //         return;
+            //     }
+        
+            //     fetchData(state1, district1, commodity1, "results-table1");
+            //     fetchData(state2, district2, commodity2, "results-table2");
+            // });
+        });
+        let priceChart; // Store the chart instance
+
+    function updateChart(data1, data2) {
+    const labels = ["Min Price", "Max Price", "Modal Price"];
+
+    // Extract price values from response
+    const prices1 = data1 ? [data1.Min_Price, data1.Max_Price, data1.Modal_Price] : [0, 0, 0];
+    const prices2 = data2 ? [data2.Min_Price, data2.Max_Price, data2.Modal_Price] : [0, 0, 0];
+
+    const ctx = document.getElementById("priceChart").getContext("2d");
+
+    // Destroy previous chart instance (if any) before creating a new one
+    if (priceChart) {
+        priceChart.destroy();
+    }
+
+    priceChart = new Chart(ctx, {
+        type: "bar",
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: "Selection 1",
+                    data: prices1,
+                    backgroundColor: "rgba(54, 162, 235, 0.7)",
+                    borderColor: "rgba(54, 162, 235, 1)",
+                    borderWidth: 1
+                },
+                {
+                    label: "Selection 2",
+                    data: prices2,
+                    backgroundColor: "rgba(255, 99, 132, 0.7)",
+                    borderColor: "rgba(255, 99, 132, 1)",
+                    borderWidth: 1
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: { beginAtZero: true }
+            }
+        }
+    });
+}
+
+// Function to fetch and update chart
+function fetchAndCompare() {
+    let state1 = document.getElementById("state1").value.trim();
+    let district1 = document.getElementById("district1").value.trim();
+    let commodity1 = document.getElementById("commodity1").value.trim();
+    let arrival_date1 = document.getElementById("arrival_date1").value.trim();
+
+
+    let state2 = document.getElementById("state2").value.trim();
+    let district2 = document.getElementById("district2").value.trim();
+    let commodity2 = document.getElementById("commodity2").value.trim();
+    let arrival_date2 = document.getElementById("arrival_date2").value.trim();
+
+
+    if (!state1 || !district1 || !commodity1 || !state2 || !district2 || !commodity2) {
+        alert("Please enter all fields for comparison.");
+        return;
+    }
+
+    Promise.all([
+        fetch(`/market-prices/search-prices/?state=${state1}&district=${district1}&commodity=${commodity1}&arrival_date=${arrival_date1}`).then(res => res.json()),
+        fetch(`/market-prices/search-prices/?state=${state2}&district=${district2}&commodity=${commodity2}&arrival_date=${arrival_date2}`).then(res => res.json())
+    ]).then(([data1, data2]) => {
+        // Use the first record for chart comparison
+        updateChart(data1.records[0], data2.records[0]);
+    }).catch(error => {
+        console.error("Error fetching data:", error);
+        alert("Error fetching data. Please try again.");
+    });
+}
+
+// // Attach chart update to the Compare button
+document.getElementById("compare").addEventListener("click", fetchAndCompare);
+</script>
+        
+    
+</body>
+</html>
+{%endblock%}

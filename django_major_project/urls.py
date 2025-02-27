@@ -23,7 +23,8 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("systems/", include("predictions.urls")),
     path("accounts/", include("accounts.urls")),
-    path("marketplace/", include("marketplace.urls"))
+    path("marketplace/", include("marketplace.urls")),
+    path("market-prices/", include("marketprices.urls"))
 ]
 
 if settings.DEBUG:
